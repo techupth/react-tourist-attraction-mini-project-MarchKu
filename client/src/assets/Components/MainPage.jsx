@@ -4,10 +4,17 @@ import { useState, useEffect } from "react";
 function Main() {
   const [searchData, setSearchdata] = useState("");
   const [dataFromSever, setdataFromSever] = useState([]);
+  const [getTag, setGetTag] = useState([]);
+  let selectedTag = getTag;
+  let count = [];
+
+  /* Function */
+  /* Function 1: Cut Text within 100 digit */
   const digitCount = (text) => {
     let lessThan100 = text.split("").slice(0, 99).join("") + "...";
     return lessThan100;
   };
+  /* Function 2: Get search data from sever */
   const getSearchDataFromSever = async (searchText) => {
     try {
       const result = await axios.get(
@@ -18,22 +25,42 @@ function Main() {
       console.log(error);
     }
   };
+  /* Function 3: Get all data from sever */
   const getDataFromSever = async () => {
     try {
       const result = await axios.get("http://localhost:4001/trips?keywords=");
-      console.log(result.data.data);
       setdataFromSever(result.data.data);
     } catch (error) {
       alert(error);
     }
   };
-
+  /* Function 4: Filter data by tags */
+  const searchByTags = () => {
+    let totalData = dataFromSever.map((tagName) => tagName.tags);
+    let checkData = getTag;
+    
+    for (let i in checkData) {
+    count = []
+      for (let x in totalData) {
+        if (totalData[x].includes(checkData[i])) {
+          count.push(dataFromSever[x]);
+        }
+      }
+    }
+    setdataFromSever(count);
+    
+  };
+  /* Use Effect */
   useEffect(() => {
     getDataFromSever();
   }, []);
   useEffect(() => {
     getSearchDataFromSever(searchData);
   }, [searchData]);
+  useEffect(() => {
+    searchByTags();
+    console.log("Hello");
+  }, [getTag]);
 
   return (
     <section className="h-screen w-[full] flex flex-col justify-start items-center">
@@ -52,14 +79,44 @@ function Main() {
             onChange={(e) => setSearchdata(e.target.value)}
           />
         </div>
+        {/* Tags section */}
+        <div className="flex flex-row h-[50px] justify-center items-center mt-[1%] gap-5 ">
+          <h2>Tag ในการค้นหา : </h2>
+          {getTag.map((tagName, index) => {
+            return (
+              <div
+                key={index}
+                className=" bg-[#438dd6] flex flex-row pl-2 gap-2 rounded-xl overflow-hidden"
+              >
+                <p>{tagName}</p>
+                <button
+                  className=" bg-orange-400 w-[20px] hover:bg-orange-600 text-center"
+                  id={index}
+                  onClick={(e) => {
+                    let dummy = [...getTag];
+                    if (dummy.length === 1) {
+                      setGetTag([]);
+                      getDataFromSever()
+                    } else {
+                      dummy.splice(index, 1);
+                      setGetTag(dummy);
+                      
+                    }
+                  }}
+                >
+                  x
+                </button>
+              </div>
+            );
+          })}
+        </div>
         {/* Card section */}
-
-        {dataFromSever.map((item, index) => {
+        {dataFromSever.map((item, index, array) => {
           return (
             <div className="w-[100%]" key={index}>
-              <div className="h-[400px] gap-[50px] flex flex-row mt-[2%] mb-[1%]">
+              <div className="h-[400px] gap-[50px] flex flex-row mt-[1%] mb-[1%]">
                 {/* Card Image */}
-                <div className=" bg-red-500 h-full basis-1/3 rounded-[10%] overflow-hidden">
+                <div className=" h-full basis-1/3 rounded-[10%] overflow-hidden">
                   <img
                     src={item.photos[0]}
                     alt="image"
@@ -89,11 +146,12 @@ function Main() {
                         return (
                           <button
                             className="underline px-2 hover:text-[#438dd6]"
-                            onClick={() =>
-                              searchData === ""
-                                ? setSearchdata(tag)
-                                : setSearchdata(`${searchData} ${tag}`)
-                            }
+                            key={tag}
+                            id={tag}
+                            onClick={(e) => {
+                              selectedTag.push(e.target.getAttribute("id"));
+                              setGetTag([...selectedTag]);
+                            }}
                           >
                             {tag}
                           </button>
@@ -128,7 +186,7 @@ function Main() {
                     className=" size-12 absolute right-2 bottom-2 rounded-full border-3xl border-2 p-2 border-[#438dd6]"
                     onClick={() => {
                       navigator.clipboard.writeText(item.url);
-                      alert("Link coppied!")
+                      alert("Link coppied!");
                     }}
                   >
                     <svg
