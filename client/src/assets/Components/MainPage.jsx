@@ -38,9 +38,9 @@ function Main() {
   const searchByTags = () => {
     let totalData = dataFromSever.map((tagName) => tagName.tags);
     let checkData = getTag;
-    
+
     for (let i in checkData) {
-    count = []
+      count = [];
       for (let x in totalData) {
         if (totalData[x].includes(checkData[i])) {
           count.push(dataFromSever[x]);
@@ -48,7 +48,6 @@ function Main() {
       }
     }
     setdataFromSever(count);
-    
   };
   /* Use Effect */
   useEffect(() => {
@@ -63,76 +62,84 @@ function Main() {
   }, [getTag]);
 
   return (
-    <section className="h-screen w-[full] flex flex-col justify-start items-center">
-      <div className="w-[1440px] flex flex-col justify-center items-center">
+    <section className="h-screen w-[full] flex flex-col justify-start items-center ">
+      <div
+        iv
+        className="w-[80%] min-w-[970px] max-w-[1440px] flex flex-col justify-center items-center max-[768px]:min-w-[500px]"
+      >
         {/* input section */}
-        <div className="pt-[2%] pb-[1%] w-[80%] ">
+        <div className="pt-[4%] pb-[1%] w-[100%] sticky top-0 bg-white z-10 flex flex-col justify-center items-center ">
           <h1 className="text-center text-[#438dd6] font-extrabold text-6xl pb-12">
             เที่ยวไหนดี
           </h1>
-          <p className=" text-start font-bold text-xl pb-8">ค้นหาที่เที่ยว</p>
+          <p className=" text-start font-bold text-xl pb-6 w-[80%]">
+            ค้นหาที่เที่ยว
+          </p>
           <input
             type="text"
             placeholder="หาที่เที่ยวแล้วไปกัน ..."
-            className="text-xl text-center w-full border-b-2"
+            className="text-xl text-center w-[80%] border-b-2 content-center"
             value={searchData}
             onChange={(e) => setSearchdata(e.target.value)}
           />
-        </div>
-        {/* Tags section */}
-        <div className="flex flex-row h-[50px] justify-center items-center mt-[1%] gap-5 ">
-          <h2>Tag ในการค้นหา : </h2>
-          {getTag.map((tagName, index) => {
-            return (
-              <div
-                key={index}
-                className=" bg-[#438dd6] flex flex-row pl-2 gap-2 rounded-xl overflow-hidden"
-              >
-                <p>{tagName}</p>
-                <button
-                  className=" bg-orange-400 w-[20px] hover:bg-orange-600 text-center"
-                  id={index}
-                  onClick={(e) => {
-                    let dummy = [...getTag];
-                    if (dummy.length === 1) {
-                      setGetTag([]);
-                      getDataFromSever()
-                    } else {
-                      dummy.splice(index, 1);
-                      setGetTag(dummy);
-                      
-                    }
-                  }}
+          {/* Tags section */}
+          <div className="flex flex-row h-[50px] justify-center items-center mt-[1%] gap-5">
+            <h2>Tag ในการค้นหา : </h2>
+            {getTag.map((tagName, index) => {
+              return (
+                <div
+                  key={index}
+                  className=" bg-[#438dd6] flex flex-row pl-2 gap-2 rounded-xl overflow-hidden"
                 >
-                  x
-                </button>
-              </div>
-            );
-          })}
+                  <p>{tagName}</p>
+                  <button
+                    className=" bg-orange-400 w-[20px] hover:bg-orange-600 text-center"
+                    id={index}
+                    onClick={(e) => {
+                      let dummy = [...getTag];
+                      if (dummy.length === 1) {
+                        setGetTag([]);
+                        getDataFromSever();
+                      } else {
+                        dummy.splice(index, 1);
+                        setGetTag(dummy);
+                      }
+                    }}
+                  >
+                    x
+                  </button>
+                </div>
+              );
+            })}
+          </div>
         </div>
+
         {/* Card section */}
         {dataFromSever.map((item, index, array) => {
           return (
-            <div className="w-[100%]" key={index}>
-              <div className="h-[400px] gap-[50px] flex flex-row mt-[1%] mb-[1%]">
+            <div
+              className="w-[100%] flex flex-col justify-center items-center max-[768px]:border-2 max-[768px]:px-4 max-[768px]:pt-4 max-[768px]:mb-4 rounded-2xl"
+              key={index}
+            >
+              <div className="h-[400px] w-full max-w-[1440px] gap-[50px] flex flex-row mt-[1%] mb-[1%] max-[768px]:flex-col max-[768px]:h-[700px] max-[768px]:w-[100%] max-[768px]:gap-[10px] max-[768px]:items-center ">
                 {/* Card Image */}
-                <div className=" h-full basis-1/3 rounded-[10%] overflow-hidden">
+                <div className=" h-full min-w-[300px] basis-1/3 rounded-[10%] overflow-hidden max-[768px]:w-[80%] max-[768px]:max-w-[320px]">
                   <img
                     src={item.photos[0]}
                     alt="image"
-                    className=" size-full object-cover"
+                    className=" size-full object-cover "
                   />
                 </div>
                 {/* Card Text*/}
                 <div className=" h-full basis-2/3 flex flex-col justify-start p-1 max-h-[400px] relative">
                   <div className="basis-1/2">
-                    <h2 className="text-4xl pb-4 pt-2 font-bold">
+                    <h2 className="text-4xl pb-4 pt-2 font-bold max-[768px]:text-xl">
                       {item.title}
                     </h2>
-                    <p className="text-xl pb-2 over">
+                    <p className="text-xl pb-2 over max-[768px]:text-lg">
                       {digitCount(item.description)}
                     </p>
-                    <p className="text-xl pb-2  underline text-[#438dd6]">
+                    <p className="text-xl pb-2  underline text-[#438dd6] max-[768px]:text-lg">
                       <span
                         className="hover:cursor-pointer"
                         onClick={() => window.open(item.url, "_blank")}
@@ -140,7 +147,7 @@ function Main() {
                         อ่านต่อ
                       </span>
                     </p>
-                    <p className="text-xl pb-2">
+                    <p className="text-xl pb-2 max-[768px]:text-lg">
                       หมวด :{" "}
                       {item.tags.map((tag, index) => {
                         return (
@@ -159,22 +166,22 @@ function Main() {
                       })}
                     </p>
                   </div>
-                  <div className="flex flex-row gap-[40px] basis-1/2 p-2">
-                    <div className="bg-white min-h-[168px] w-[20%] rounded-2xl overflow-hidden">
+                  <div className="flex flex-row gap-[40px] basis-1/2 p-2 max-[768px]:gap-[10px] max-[768px]:justify-start max-[768px]:p-[0px] max-[768px]:justify-center">
+                    <div className="bg-white  w-[20%] min-w-[150px] rounded-2xl overflow-hidden max-[768px]:w-[25%] max-[768px]:h-[60%] ">
                       <img
                         src={item.photos[1]}
                         alt="image"
                         className=" size-full object-cover"
                       />
                     </div>
-                    <div className="bg-white min-h-[168px] w-[20%] rounded-2xl overflow-hidden">
+                    <div className="bg-white  w-[20%] min-w-[150px] rounded-2xl overflow-hidden max-[768px]:w-[25%] max-[768px]:h-[60%] ">
                       <img
                         src={item.photos[2]}
                         alt="image"
                         className=" size-full object-cover"
                       />
                     </div>
-                    <div className="bg-white min-h-[168px] w-[20%] rounded-2xl overflow-hidden">
+                    <div className="bg-white  w-[20%] min-w-[150px] rounded-2xl overflow-hidden max-[768px]:w-[25%]  max-[768px]:h-[60%]">
                       <img
                         src={item.photos[3]}
                         alt="image"
